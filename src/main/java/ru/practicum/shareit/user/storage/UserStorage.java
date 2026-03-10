@@ -8,11 +8,13 @@ public interface UserStorage {
 
     Optional<User> getById(int id);
 
-    User create(User user);
+    int create(User user);
 
     void update(User user);
 
     void delete(int id);
 
     boolean emailExists(String email);
+
+    boolean userExists(int id);
 }

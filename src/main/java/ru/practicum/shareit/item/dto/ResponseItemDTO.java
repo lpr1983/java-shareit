@@ -1,11 +1,11 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
 
 @Data
-public class ResponseUserDTO {
+public class ResponseItemDTO {
     private int id;
     private String name;
-    private String email;
+    private String description;
     private boolean available;
 }

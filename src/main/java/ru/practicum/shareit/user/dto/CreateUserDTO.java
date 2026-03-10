@@ -11,6 +11,6 @@ public class CreateUserDTO {
     private String name;
 
     @NotNull
-    @Email(message = "email в неправильном формате")
+    @Email(message = "Email в неправильном формате")
     private String email;
 }

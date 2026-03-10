@@ -47,4 +47,5 @@ public class UserController {
     public ResponseUserDTO update(@Valid @RequestBody UpdateUserDTO userToUpdate, @PathVariable int id) {
         return userService.update(id, userToUpdate);
     }
+
 }

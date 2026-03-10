@@ -18,12 +18,17 @@ public class UserInMemoryStorage implements UserStorage {
     }
 
     @Override
-    public User create(User user) {
+    public boolean userExists(int id) {
+        return users.containsKey(id);
+    }
+
+    @Override
+    public int create(User user) {
         int newId = getNewId();
         user.setId(newId);
         users.put(newId, user);
 
-        return user;
+        return newId;
     }
 
     @Override

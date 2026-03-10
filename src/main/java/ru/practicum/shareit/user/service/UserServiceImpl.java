@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.exception.AlgorithmFailException;
 import ru.practicum.shareit.error.exception.ConflictException;
@@ -43,7 +42,8 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toEntity(createUserDTO);
 
-        User createdUser = userStorage.create(user);
+        int id = userStorage.create(user);
+        User createdUser = checkUserExistsAndReturnIt(id);
 
         return userMapper.toResponseDto(createdUser);
     }
