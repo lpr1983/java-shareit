@@ -12,6 +12,8 @@ import ru.practicum.shareit.user.mappers.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,6 +24,13 @@ public class UserServiceImpl implements UserService {
                            UserMapper userMapper) {
         this.userStorage = userStorage;
         this.userMapper = userMapper;
+    }
+
+    @Override
+    public List<ResponseUserDTO> getAll() {
+        return userStorage.getAll().stream()
+                .map(userMapper::toResponseDto)
+                .toList();
     }
 
     @Override

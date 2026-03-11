@@ -3,7 +3,9 @@ package ru.practicum.shareit.user.storage;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,6 +13,13 @@ import java.util.Optional;
 public class UserInMemoryStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private int counter;
+
+    @Override
+    public List<User> getAll() {
+        return users.values().stream()
+                .sorted(Comparator.comparingInt(User::getId))
+                .toList();
+    }
 
     @Override
     public Optional<User> getById(int id) {

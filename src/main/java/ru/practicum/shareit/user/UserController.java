@@ -16,6 +16,8 @@ import ru.practicum.shareit.user.dto.UpdateUserDTO;
 import ru.practicum.shareit.user.dto.ResponseUserDTO;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
@@ -23,6 +25,11 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public List<ResponseUserDTO> getAll() {
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.exception.AlgorithmFailException;
 import ru.practicum.shareit.error.exception.NotFoundException;
-import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CreateItemDTO;
 import ru.practicum.shareit.item.dto.ResponseItemDTO;
 import ru.practicum.shareit.item.dto.UpdateItemDTO;
@@ -16,7 +15,6 @@ import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,7 +26,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ResponseItemDTO create(CreateItemDTO itemToCreate, int ownerId) {
-        log.info("create {}", itemToCreate);
+        log.info("Create item request: ownerId={}, dto={}", ownerId, itemToCreate);
 
         checkUserExists(ownerId);
 
@@ -38,6 +36,8 @@ public class ItemServiceImpl implements ItemService {
 
         Item createdItem = itemStorage.getById(id)
                 .orElseThrow(() -> new AlgorithmFailException("Не найден созданный элемент, id: " + id));
+
+        log.info("Item created: id={}", id);
 
         return itemMapper.toResponseDto(createdItem);
     }
@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ResponseItemDTO update(UpdateItemDTO updateItemDTO, int itemId, int ownerId) {
-        log.info("update {}", updateItemDTO);
+        log.info("Update item request: ownerId={}, itemId={}, dto={}", ownerId, itemId, updateItemDTO);
 
         checkUserExists(ownerId);
 
@@ -76,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ResponseItemDTO> getItemsOfUser(int ownerId) {
-        log.info("items of user {}", ownerId);
+        log.info("Items of user request: ownerId={}", ownerId);
 
         checkUserExists(ownerId);
 
@@ -88,9 +88,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ResponseItemDTO> search(String text) {
-        log.info("search {}", text);
+        log.info("Search request: text={}", text);
 
-        if (text.isBlank()) {
+        if (text == null || text.isBlank()) {
             return Collections.emptyList();
         }
 
