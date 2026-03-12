@@ -48,4 +48,11 @@ public class ErrorHandler {
         log.warn("Validation failed: {}", message);
         return new ErrorResponse(message);
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleInternalError(Exception ex) {
+        log.error("Internal server error", ex);
+        return new ErrorResponse("Internal server error");
+    }
 }
