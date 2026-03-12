@@ -45,14 +45,13 @@ public class UserServiceImpl implements UserService {
         log.info("create: {}", createUserDTO);
 
         String email = createUserDTO.getEmail();
-        if (userStorage.emailExists(email)) {
-            throw new ConflictException(String.format("Пользователь с email %s уже существует", email));
-        }
+        checkEmailNotExists(email);
 
         User user = userMapper.toEntity(createUserDTO);
 
         int id = userStorage.create(user);
-        User createdUser = checkUserExistsAndReturnIt(id);
+        User createdUser = userStorage.getById(id)
+                .orElseThrow(() -> new AlgorithmFailException("Не найден созданный пользователь, id: " + id));
 
         return userMapper.toResponseDto(createdUser);
     }
@@ -71,7 +70,7 @@ public class UserServiceImpl implements UserService {
         userStorage.update(user);
 
         User updatedUser = userStorage.getById(id)
-                .orElseThrow(() -> new AlgorithmFailException("Не найден обновленный пользователь"));
+                .orElseThrow(() -> new AlgorithmFailException("Не найден обновленный пользователь, id: " + id));
 
         return userMapper.toResponseDto(updatedUser);
     }
