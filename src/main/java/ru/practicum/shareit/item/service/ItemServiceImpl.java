@@ -44,8 +44,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ResponseItemDTO getById(int itemId) {
-        Item item = itemStorage.getById(itemId)
-                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + itemId));
+        Item item = checkItemExistsAndReturnIt(itemId);
 
         return itemMapper.toResponseDto(item);
     }
@@ -56,8 +55,7 @@ public class ItemServiceImpl implements ItemService {
 
         checkUserExists(ownerId);
 
-        Item item = itemStorage.getById(itemId)
-                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + itemId));
+        Item item = checkItemExistsAndReturnIt(itemId);
 
         if (item.getOwnerId() != ownerId) {
             throw new NotFoundException(String.format("У пользователя %s нет вещи %s",
@@ -98,6 +96,12 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(itemMapper::toResponseDto)
                 .toList();
+    }
+
+    private Item checkItemExistsAndReturnIt(int itemId) {
+
+        return itemStorage.getById(itemId)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + itemId));
     }
 
     private void checkUserExists(int id) {
