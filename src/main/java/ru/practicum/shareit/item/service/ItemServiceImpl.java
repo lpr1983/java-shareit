@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.error.exception.AlgorithmFailException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CreateItemDTO;
 import ru.practicum.shareit.item.dto.ResponseItemDTO;
@@ -32,12 +31,10 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = itemMapper.toEntity(itemToCreate);
         item.setOwnerId(ownerId);
-        int id = itemStorage.create(item);
 
-        Item createdItem = itemStorage.getById(id)
-                .orElseThrow(() -> new AlgorithmFailException("Не найден созданный элемент, id: " + id));
+        Item createdItem = itemStorage.save(item);
 
-        log.info("Item created: id={}", id);
+        log.info("Item created: id={}", createdItem.getId());
 
         return itemMapper.toResponseDto(createdItem);
     }
@@ -64,10 +61,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemMapper.update(item, updateItemDTO);
 
-        itemStorage.update(item);
-
-        Item updatedItem = itemStorage.getById(itemId)
-                .orElseThrow(() -> new AlgorithmFailException("Не найден обновленный элемент, id: " + itemId));
+        Item updatedItem = itemStorage.save(item);
 
         return itemMapper.toResponseDto(updatedItem);
     }
@@ -78,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
 
         checkUserExists(ownerId);
 
-        return itemStorage.getItemsOfUser(ownerId)
+        return itemStorage.findByOwnerId(ownerId)
                 .stream()
                 .map(itemMapper::toResponseDto)
                 .toList();
@@ -92,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemStorage.search(text)
+        return itemStorage.search("%" + text.toLowerCase() + "%")
                 .stream()
                 .map(itemMapper::toResponseDto)
                 .toList();
@@ -100,12 +94,12 @@ public class ItemServiceImpl implements ItemService {
 
     private Item checkItemExistsAndReturnIt(int itemId) {
 
-        return itemStorage.getById(itemId)
+        return itemStorage.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + itemId));
     }
 
     private void checkUserExists(int id) {
-        if (!userStorage.userExists(id)) {
+        if (!userStorage.existsById(id)) {
             throw new NotFoundException("Не найден пользователь с id: " + id);
         }
     }

@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.error.exception.AlgorithmFailException;
 import ru.practicum.shareit.error.exception.ConflictException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.CreateUserDTO;
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<ResponseUserDTO> getAll() {
-        return userStorage.getAll().stream()
+        return userStorage.findAll().stream()
                 .map(userMapper::toResponseDto)
                 .toList();
     }
@@ -49,9 +48,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toEntity(createUserDTO);
 
-        int id = userStorage.create(user);
-        User createdUser = userStorage.getById(id)
-                .orElseThrow(() -> new AlgorithmFailException("Не найден созданный пользователь, id: " + id));
+        User createdUser = userStorage.save(user);
 
         return userMapper.toResponseDto(createdUser);
     }
@@ -67,10 +64,8 @@ public class UserServiceImpl implements UserService {
         }
 
         userMapper.update(user, updateUserDTO);
-        userStorage.update(user);
 
-        User updatedUser = userStorage.getById(id)
-                .orElseThrow(() -> new AlgorithmFailException("Не найден обновленный пользователь, id: " + id));
+        User updatedUser = userStorage.save(user);
 
         return userMapper.toResponseDto(updatedUser);
     }
@@ -80,16 +75,16 @@ public class UserServiceImpl implements UserService {
         log.info("delete {}", id);
 
         checkUserExistsAndReturnIt(id);
-        userStorage.delete(id);
+        userStorage.deleteById(id);
     }
 
     private User checkUserExistsAndReturnIt(int id) {
-        return userStorage.getById(id)
+        return userStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + id));
     }
 
     private void checkEmailNotExists(String email) {
-        if (userStorage.emailExists(email)) {
+        if (userStorage.existsByEmail(email)) {
             throw new ConflictException(String.format("Пользователь с email %s уже существует", email));
         }
     }
