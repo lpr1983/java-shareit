@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.mappers;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -10,13 +11,20 @@ import ru.practicum.shareit.item.dto.UpdateItemDTO;
 import ru.practicum.shareit.item.model.Item;
 
 @Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        unmappedTargetPolicy = ReportingPolicy.ERROR,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ItemMapper {
 
+    @Mapping(target = "lastBooking", ignore = true)
+    @Mapping(target = "nextBooking", ignore = true)
+    @Mapping(target = "comments", ignore = true)
     ResponseItemDTO toResponseDto(Item item);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "ownerId", ignore = true)
     Item toEntity(CreateItemDTO dto);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "ownerId", ignore = true)
     void update(@MappingTarget Item item, UpdateItemDTO dto);
 }

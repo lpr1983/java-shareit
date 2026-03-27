@@ -42,7 +42,7 @@ public class ErrorHandler {
                 .getFieldErrors()
                 .stream()
                 .findFirst()
-                .map(fieldError -> fieldError.getDefaultMessage())
+                .map(fieldError -> String.format("Поле %s %s", fieldError.getField(), fieldError.getDefaultMessage()))
                 .orElse("Ошибка валидации");
 
         log.warn("Validation failed: {}", message);
