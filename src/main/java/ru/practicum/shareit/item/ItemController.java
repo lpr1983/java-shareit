@@ -42,9 +42,9 @@ public class ItemController {
         return itemService.update(itemToUpdate, itemId, ownerId);
     }
 
-    @GetMapping("{itemId}")
-    public ResponseItemDTO getById(@PathVariable int itemId) {
-        return itemService.getById(itemId);
+    @GetMapping("/{itemId}")
+    public ResponseItemDTO getById(@PathVariable int itemId, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+        return itemService.getById(itemId, ownerId);
     }
 
     @GetMapping

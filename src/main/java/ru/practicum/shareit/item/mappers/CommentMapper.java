@@ -10,7 +10,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR,
@@ -25,5 +25,5 @@ public interface CommentMapper {
     @Mapping(target = "author", source = "author")
     @Mapping(target = "item", source = "item")
     @Mapping(target = "created", source = "created")
-    Comment toEntity(CreateCommentDTO dto, User author, Item item, Instant created);
+    Comment toEntity(CreateCommentDTO dto, User author, Item item, LocalDateTime created);
 }

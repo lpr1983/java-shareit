@@ -13,7 +13,7 @@ public interface ItemService {
 
     ResponseItemDTO update(UpdateItemDTO itemToUpdate, int itemId, int ownerId);
 
-    ResponseItemDTO getById(int itemId);
+    ResponseItemDTO getById(int itemId, int ownerId);
 
     List<ResponseItemDTO> getItemsOfUser(int ownerId);
 

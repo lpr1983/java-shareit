@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.BookingDatesOfItem;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingStorage;
@@ -19,10 +20,9 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.CommentStorage;
+import ru.practicum.shareit.item.storage.CommentStorage;
 import ru.practicum.shareit.user.storage.UserStorage;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -60,12 +61,16 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toResponseDto(createdItem);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public ResponseItemDTO getById(int itemId) {
+    public ResponseItemDTO getById(int itemId, int ownerId) {
         Item item = checkItemExistsAndReturnIt(itemId);
 
         ResponseItemDTO dto = itemMapper.toResponseDto(item);
-        attachBookingDates(dto);
+        if (item.getOwnerId() == ownerId) {
+            attachBookingDates(dto);
+        }
+
         attachComments(dto);
 
         return dto;
@@ -95,13 +100,14 @@ public class ItemServiceImpl implements ItemService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ResponseItemDTO> getItemsOfUser(int ownerId) {
         log.info("Items of user request: ownerId={}", ownerId);
 
         checkUserExists(ownerId);
 
-        List<Item> items = itemStorage.findByOwnerId(ownerId);
+        List<Item> items = itemStorage.findByOwnerIdOrderByIdAsc(ownerId);
 
         List<ResponseItemDTO> dtoList = items.stream().map(itemMapper::toResponseDto).toList();
         attachBookingDates(dtoList);
@@ -110,6 +116,7 @@ public class ItemServiceImpl implements ItemService {
         return dtoList;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ResponseItemDTO> search(String text) {
         log.info("Search request: text={}", text);
@@ -120,11 +127,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<Item> items = itemStorage.search("%" + text.toLowerCase() + "%");
 
-        List<ResponseItemDTO> dtoList = items.stream().map(itemMapper::toResponseDto).toList();
-        attachBookingDates(dtoList);
-        attachComments(dtoList);
-
-        return dtoList;
+        return items.stream().map(itemMapper::toResponseDto).toList();
     }
 
     @Override
@@ -147,7 +150,7 @@ public class ItemServiceImpl implements ItemService {
             );
         }
 
-        Comment comment = commentMapper.toEntity(dto, author, item, Instant.now());
+        Comment comment = commentMapper.toEntity(dto, author, item, now);
         Comment savedComment = commentStorage.save(comment);
 
         return commentMapper.toResponseDto(savedComment);
