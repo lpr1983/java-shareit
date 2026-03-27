@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.mappers;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -11,8 +12,7 @@ import ru.practicum.shareit.user.dto.ResponseUserDTO;
 import ru.practicum.shareit.user.model.User;
 
 @Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.ERROR,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserMapper {
 
     ResponseUserDTO toResponseDto(User user);
@@ -20,6 +20,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     User toEntity(CreateUserDTO dto);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     void update(@MappingTarget User user, UpdateUserDTO dto);
 }

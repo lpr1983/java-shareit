@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,6 +20,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
@@ -33,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseUserDTO getUser(@PathVariable int id) {
+    public ResponseUserDTO getUser(@PathVariable @Positive int id) {
         return userService.getById(id);
     }
 
@@ -45,13 +48,13 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable @Positive int id) {
         userService.delete(id);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseUserDTO update(@Valid @RequestBody UpdateUserDTO userToUpdate, @PathVariable int id) {
+    public ResponseUserDTO update(@Valid @RequestBody UpdateUserDTO userToUpdate, @PathVariable @Positive int id) {
         return userService.update(id, userToUpdate);
     }
 

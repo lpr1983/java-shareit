@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exception.ConflictException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.CreateUserDTO;
@@ -13,6 +14,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
 
+@Transactional
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,6 +27,7 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ResponseUserDTO> getAll() {
         return userStorage.findAll().stream()
@@ -32,6 +35,7 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ResponseUserDTO getById(int id) {
         return userMapper.toResponseDto(
