@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.CreateBookingDTO;
 import ru.practicum.shareit.booking.dto.ResponseBookingDTO;
@@ -19,6 +20,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -29,6 +31,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDTO> getBookingsOfOwner(int userId, String state) {
+        log.info("getBookingsOfOwner, userId {}, state {}", userId, state);
+
         BookingStateFilter filter = BookingStateFilter.parse(state);
 
         if (filter == null) {
@@ -55,6 +59,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDTO> getBookingsOfUser(int userId, String state) {
+        log.info("getBookingsOfUser, userId {}, state {}", userId, state);
+
         BookingStateFilter filter = BookingStateFilter.parse(state);
 
         if (filter == null) {
@@ -81,12 +87,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseBookingDTO getById(int userId, int bookingId) {
+        log.info("getById, userId {}, bookingId {}", userId, bookingId);
 
         Booking booking = bookingStorage.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Не найдено бронирование с id: " + bookingId));
 
         if (booking.getItem().getOwnerId() != userId && booking.getBooker().getId() != userId) {
-            throw new ValidationException(String.format("Пользователь с id = %n не является не автором брони, ни владельцем вещи", userId));
+            throw new ValidationException(String.format("Пользователь с id = %d не является не автором брони, ни владельцем вещи", userId));
         }
 
         return bookingMapper.toResponseDto(booking);
@@ -94,13 +101,21 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseBookingDTO approve(int bookingId, int userId, boolean approved) {
+        log.info("approve, userId {}, bookingId {}, approved", userId, bookingId, approved);
 
         Booking booking = bookingStorage.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Не найдено бронирование с id: " + bookingId));
 
         Item item = booking.getItem();
         if (item.getOwnerId() != userId) {
-            throw new ValidationException(String.format("Пользователь с id %n не является владельцем вещи с id %n", userId, item.getId()));
+            throw new ValidationException(String.format("Пользователь с id %d не является владельцем вещи с id %d",
+                    userId, item.getId()));
+        }
+
+        BookingStatus currentStatus = booking.getStatus();
+
+        if (currentStatus != BookingStatus.WAITING) {
+            throw new ValidationException("Операция недоступна в статусе " + currentStatus);
         }
 
         if (approved) {
@@ -116,6 +131,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseBookingDTO create(CreateBookingDTO createBookingDto, int userId) {
+        log.info("create, userId {}, dto {}", userId, createBookingDto);
+
+        if (createBookingDto.getStart().isAfter(createBookingDto.getEnd())) {
+            throw new ValidationException("Время завершения не может быть меньше времени начала");
+        }
 
         User booker = userStorage.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + userId));
@@ -126,6 +146,10 @@ public class BookingServiceImpl implements BookingService {
 
         if (!item.isAvailable()) {
             throw new ValidationException("Недоступна вещь с id: " + itemId);
+        }
+
+        if (userId == item.getOwnerId()) {
+            throw new ValidationException("Нельзя бронировать собственную вещь");
         }
 
         Booking booking = bookingMapper.toEntity(createBookingDto, booker, item);

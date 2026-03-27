@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.shareit.booking.dto.CreateBookingDTO;
 import ru.practicum.shareit.booking.dto.ResponseBookingDTO;
@@ -11,8 +10,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 @Mapper(componentModel = "spring",
-unmappedTargetPolicy = ReportingPolicy.ERROR,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface BookingMapper {
 
     @Mapping(target = "item.lastBooking", ignore = true)

@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.shareit.item.dto.CreateCommentDTO;
 import ru.practicum.shareit.item.dto.ResponseCommentDTO;
@@ -13,8 +12,7 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.ERROR,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface CommentMapper {
 
     @Mapping(target = "authorName", source = "author.name")

@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.BookingDatesOfItem;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingStorage;
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Transactional
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -61,7 +59,6 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toResponseDto(createdItem);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public ResponseItemDTO getById(int itemId, int ownerId) {
         Item item = checkItemExistsAndReturnIt(itemId);
@@ -100,7 +97,6 @@ public class ItemServiceImpl implements ItemService {
         return dto;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<ResponseItemDTO> getItemsOfUser(int ownerId) {
         log.info("Items of user request: ownerId={}", ownerId);
@@ -116,7 +112,6 @@ public class ItemServiceImpl implements ItemService {
         return dtoList;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<ResponseItemDTO> search(String text) {
         log.info("Search request: text={}", text);
@@ -132,6 +127,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ResponseCommentDTO createComment(CreateCommentDTO dto, int userId, int itemId) {
+        log.info("createComment, dto {}, userId {}, itemId {}", dto, userId, itemId);
+
         User author = userStorage.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + userId));
 
