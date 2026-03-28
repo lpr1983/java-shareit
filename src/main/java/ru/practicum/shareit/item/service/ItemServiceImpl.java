@@ -131,8 +131,7 @@ public class ItemServiceImpl implements ItemService {
         User author = userStorage.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + userId));
 
-        Item item = itemStorage.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + itemId));
+        Item item = checkItemExistsAndReturnIt(itemId);
 
         LocalDateTime now = LocalDateTime.now();
 
