@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
+import ru.practicum.shareit.error.exception.ValidationException;
+
 public enum BookingStateFilter {
     ALL,
     CURRENT,
@@ -12,7 +14,7 @@ public enum BookingStateFilter {
         try {
             return BookingStateFilter.valueOf(str.trim().toUpperCase());
         } catch (Exception e) {
-            return null;
+            throw new ValidationException("Неизвестный фильтр state: " + str);
         }
     }
 }

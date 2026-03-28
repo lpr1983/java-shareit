@@ -35,10 +35,6 @@ public class BookingServiceImpl implements BookingService {
 
         BookingStateFilter filter = BookingStateFilter.parse(state);
 
-        if (filter == null) {
-            throw new ValidationException("Неизвестный фильтр state: " + state);
-        }
-
         if (!userStorage.existsById(userId)) {
             throw new NotFoundException("Не найден пользователь с id: " + userId);
         }
@@ -62,10 +58,6 @@ public class BookingServiceImpl implements BookingService {
         log.info("getBookingsOfUser, userId {}, state {}", userId, state);
 
         BookingStateFilter filter = BookingStateFilter.parse(state);
-
-        if (filter == null) {
-            throw new ValidationException("Неизвестный фильтр state: " + state);
-        }
 
         if (!userStorage.existsById(userId)) {
             throw new NotFoundException("Не найден пользователь с id: " + userId);
