@@ -81,8 +81,7 @@ public class BookingServiceImpl implements BookingService {
     public ResponseBookingDTO getById(int userId, int bookingId) {
         log.info("getById, userId {}, bookingId {}", userId, bookingId);
 
-        Booking booking = bookingStorage.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Не найдено бронирование с id: " + bookingId));
+        Booking booking = checkBookingExistsAndReturnIt(bookingId);
 
         if (booking.getItem().getOwnerId() != userId && booking.getBooker().getId() != userId) {
             throw new ValidationException(String.format("Пользователь с id = %d не является не автором брони, ни владельцем вещи", userId));
@@ -95,8 +94,7 @@ public class BookingServiceImpl implements BookingService {
     public ResponseBookingDTO approve(int bookingId, int userId, boolean approved) {
         log.info("approve, userId {}, bookingId {}, approved", userId, bookingId, approved);
 
-        Booking booking = bookingStorage.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Не найдено бронирование с id: " + bookingId));
+        Booking booking = checkBookingExistsAndReturnIt(bookingId);
 
         Item item = booking.getItem();
         if (item.getOwnerId() != userId) {
@@ -148,5 +146,10 @@ public class BookingServiceImpl implements BookingService {
         Booking createdBooking = bookingStorage.save(booking);
 
         return bookingMapper.toResponseDto(createdBooking);
+    }
+
+    private Booking checkBookingExistsAndReturnIt(int bookingId) {
+        return bookingStorage.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Не найдено бронирование с id: " + bookingId));
     }
 }
