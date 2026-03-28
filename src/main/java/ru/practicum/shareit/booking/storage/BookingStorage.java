@@ -93,15 +93,14 @@ public interface BookingStorage extends JpaRepository<Booking, Integer> {
     @Query("""
             select b.item.id as itemId,
             max(case when b.end <= ?2 then b.start else null end) as lastStart,
-            min(case when b.start > ?3 then b.start else null end) as nextStart
+            min(case when b.start > ?2 then b.start else null end) as nextStart
             from Booking b
             where b.item.id in ?1
-                and b.status = ?4
+                and b.status = ?3
               group by b.item.id
             """)
     List<BookingDatesOfItem> getLastAndNextBookingDatesOfItems(
             List<Integer> itemIds,
-            LocalDateTime lastBookingBoundary,
             LocalDateTime now,
             BookingStatus status
     );

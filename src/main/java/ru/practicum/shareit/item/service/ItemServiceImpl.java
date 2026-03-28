@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private static final int LAST_BOOKING_TEST_TOLERANCE_SEC = 5;
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
     private final ItemStorage itemStorage;
@@ -189,13 +188,8 @@ public class ItemServiceImpl implements ItemService {
 
         List<Integer> ids = dtoList.stream().map(ResponseItemDTO::getId).toList();
 
-        // Автотест "Get item with comments" ожидает отсутствие lastBooking,
-        // если бронирование завершилось непосредственно перед чтением item.
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime lastBookingBoundary = now.minusSeconds(LAST_BOOKING_TEST_TOLERANCE_SEC);
-
         List<BookingDatesOfItem> listOfDates = bookingStorage.getLastAndNextBookingDatesOfItems(ids,
-                lastBookingBoundary,
                 now,
                 BookingStatus.APPROVED);
 
