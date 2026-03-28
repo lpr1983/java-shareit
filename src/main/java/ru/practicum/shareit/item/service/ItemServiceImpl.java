@@ -3,26 +3,44 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.error.exception.AlgorithmFailException;
+import ru.practicum.shareit.booking.model.BookingDatesOfItem;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.storage.BookingStorage;
 import ru.practicum.shareit.error.exception.NotFoundException;
+import ru.practicum.shareit.error.exception.ValidationException;
+import ru.practicum.shareit.item.dto.CreateCommentDTO;
 import ru.practicum.shareit.item.dto.CreateItemDTO;
+import ru.practicum.shareit.item.dto.ResponseCommentDTO;
 import ru.practicum.shareit.item.dto.ResponseItemDTO;
 import ru.practicum.shareit.item.dto.UpdateItemDTO;
+import ru.practicum.shareit.item.mappers.CommentMapper;
 import ru.practicum.shareit.item.mappers.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.item.storage.CommentStorage;
 import ru.practicum.shareit.user.storage.UserStorage;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
+    private final BookingStorage bookingStorage;
+    private final CommentStorage commentStorage;
 
     @Override
     public ResponseItemDTO create(CreateItemDTO itemToCreate, int ownerId) {
@@ -32,21 +50,26 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = itemMapper.toEntity(itemToCreate);
         item.setOwnerId(ownerId);
-        int id = itemStorage.create(item);
 
-        Item createdItem = itemStorage.getById(id)
-                .orElseThrow(() -> new AlgorithmFailException("Не найден созданный элемент, id: " + id));
+        Item createdItem = itemStorage.save(item);
 
-        log.info("Item created: id={}", id);
+        log.info("Item created: id={}", createdItem.getId());
 
         return itemMapper.toResponseDto(createdItem);
     }
 
     @Override
-    public ResponseItemDTO getById(int itemId) {
+    public ResponseItemDTO getById(int itemId, int ownerId) {
         Item item = checkItemExistsAndReturnIt(itemId);
 
-        return itemMapper.toResponseDto(item);
+        ResponseItemDTO dto = itemMapper.toResponseDto(item);
+        if (item.getOwnerId() == ownerId) {
+            attachBookingDates(dto);
+        }
+
+        attachComments(dto);
+
+        return dto;
     }
 
     @Override
@@ -64,12 +87,13 @@ public class ItemServiceImpl implements ItemService {
 
         itemMapper.update(item, updateItemDTO);
 
-        itemStorage.update(item);
+        Item updatedItem = itemStorage.save(item);
 
-        Item updatedItem = itemStorage.getById(itemId)
-                .orElseThrow(() -> new AlgorithmFailException("Не найден обновленный элемент, id: " + itemId));
+        ResponseItemDTO dto = itemMapper.toResponseDto(updatedItem);
+        attachBookingDates(dto);
+        attachComments(dto);
 
-        return itemMapper.toResponseDto(updatedItem);
+        return dto;
     }
 
     @Override
@@ -78,10 +102,13 @@ public class ItemServiceImpl implements ItemService {
 
         checkUserExists(ownerId);
 
-        return itemStorage.getItemsOfUser(ownerId)
-                .stream()
-                .map(itemMapper::toResponseDto)
-                .toList();
+        List<Item> items = itemStorage.findByOwnerIdOrderByIdAsc(ownerId);
+
+        List<ResponseItemDTO> dtoList = items.stream().map(itemMapper::toResponseDto).toList();
+        attachBookingDates(dtoList);
+        attachComments(dtoList);
+
+        return dtoList;
     }
 
     @Override
@@ -92,20 +119,104 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemStorage.search(text)
-                .stream()
-                .map(itemMapper::toResponseDto)
-                .toList();
+        List<Item> items = itemStorage.search("%" + text.toLowerCase() + "%");
+
+        return items.stream().map(itemMapper::toResponseDto).toList();
+    }
+
+    @Override
+    public ResponseCommentDTO createComment(CreateCommentDTO dto, int userId, int itemId) {
+        log.info("createComment, dto {}, userId {}, itemId {}", dto, userId, itemId);
+
+        User author = userStorage.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + userId));
+
+        Item item = checkItemExistsAndReturnIt(itemId);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        boolean hasCompletedBooking = bookingStorage
+                .existsByBooker_IdAndItem_IdAndStatusAndEndBefore(
+                        userId, itemId, BookingStatus.APPROVED, now);
+
+        if (!hasCompletedBooking) {
+            throw new ValidationException(
+                    String.format("У пользователя с id: %s нет завершенных аренд вещи с id: %s", userId, itemId)
+            );
+        }
+
+        Comment comment = commentMapper.toEntity(dto, author, item, now);
+        Comment savedComment = commentStorage.save(comment);
+
+        return commentMapper.toResponseDto(savedComment);
+    }
+
+    private void attachComments(List<ResponseItemDTO> dtoList) {
+        if (dtoList.isEmpty()) {
+            return;
+        }
+
+        List<Integer> ids = dtoList.stream().map(ResponseItemDTO::getId).toList();
+        List<Comment> allComments = commentStorage.findAllWithAuthorByItemIds(ids);
+
+        Map<Integer, List<Comment>> mapOfComments = new HashMap<>();
+
+        for (Comment c : allComments) {
+            Integer itemId = c.getItem().getId();
+            mapOfComments.computeIfAbsent(itemId, k -> new ArrayList<>()).add(c);
+        }
+
+        for (ResponseItemDTO dto : dtoList) {
+            List<Comment> comments = mapOfComments.get(dto.getId());
+            if (comments == null) {
+                continue;
+            }
+            List<ResponseCommentDTO> commentsDTO = comments.stream().map(commentMapper::toResponseDto).toList();
+            dto.setComments(commentsDTO);
+        }
+    }
+
+    private void attachComments(ResponseItemDTO dto) {
+        attachComments(List.of(dto));
+    }
+
+    private void attachBookingDates(List<ResponseItemDTO> dtoList) {
+        if (dtoList.isEmpty()) {
+            return;
+        }
+
+        List<Integer> ids = dtoList.stream().map(ResponseItemDTO::getId).toList();
+
+        LocalDateTime now = LocalDateTime.now();
+        List<BookingDatesOfItem> listOfDates = bookingStorage.getLastAndNextBookingDatesOfItems(ids,
+                now,
+                BookingStatus.APPROVED);
+
+        Map<Integer, BookingDatesOfItem> mapOfDates = listOfDates.stream()
+                .collect(Collectors.toMap(BookingDatesOfItem::getItemId, Function.identity()));
+
+        for (ResponseItemDTO dto : dtoList) {
+            BookingDatesOfItem dates = mapOfDates.get(dto.getId());
+            if (dates == null) {
+                continue;
+            }
+
+            dto.setLastBooking(dates.getLastStart());
+            dto.setNextBooking(dates.getNextStart());
+        }
+    }
+
+    private void attachBookingDates(ResponseItemDTO dto) {
+        attachBookingDates(List.of(dto));
     }
 
     private Item checkItemExistsAndReturnIt(int itemId) {
-
-        return itemStorage.getById(itemId)
+        return itemStorage.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + itemId));
     }
 
     private void checkUserExists(int id) {
-        if (!userStorage.userExists(id)) {
+        if (!userStorage.existsById(id)) {
             throw new NotFoundException("Не найден пользователь с id: " + id);
         }
     }
