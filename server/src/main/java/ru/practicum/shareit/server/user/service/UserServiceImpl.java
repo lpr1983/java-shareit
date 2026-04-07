@@ -78,7 +78,8 @@ public class UserServiceImpl implements UserService {
         userStorage.deleteById(id);
     }
 
-    private User checkUserExistsAndReturnIt(int id) {
+    @Override
+    public User checkUserExistsAndReturnIt(int id) {
         return userStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id: " + id));
     }

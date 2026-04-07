@@ -1,4 +1,4 @@
-package ru.practicum.shareit.server.item.model;
+package ru.practicum.shareit.server.request.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,31 +10,27 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.server.request.model.ItemRequest;
+import ru.practicum.shareit.server.user.model.User;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "items")
+@Table(name = "item_requests")
 @Getter
 @Setter
-public class Item {
+public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "owner_id", nullable = false)
-    private int ownerId;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private boolean available;
-
     @ManyToOne
-    @JoinColumn(name = "item_request_id")
-    private ItemRequest itemRequest;
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
+    @Column(nullable = false)
+    String description;
+
+    @Column(nullable = false)
+    LocalDateTime created;
 
 }

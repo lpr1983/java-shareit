@@ -16,4 +16,8 @@ public interface ItemStorage extends JpaRepository<Item, Integer> {
             order by it.id
             """)
     List<Item> search(String pattern);
+
+    List<Item> findAllByItemRequest_IdInOrderByIdAsc(List<Integer> ids);
+
+    List<Item> findAllByItemRequest_IdOrderByIdAsc(Integer id);
 }

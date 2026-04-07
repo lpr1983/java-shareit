@@ -10,6 +10,7 @@ import ru.practicum.shareit.common.dto.CreateItemDTO;
 import ru.practicum.shareit.server.item.dto.ResponseItemDTO;
 import ru.practicum.shareit.common.dto.UpdateItemDTO;
 import ru.practicum.shareit.server.item.model.Item;
+import ru.practicum.shareit.server.request.model.ItemRequest;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR
@@ -23,10 +24,12 @@ public interface ItemMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ownerId", ignore = true)
-    Item toEntity(CreateItemDTO dto);
+    @Mapping(target = "description", source = "dto.description")
+    Item toEntity(CreateItemDTO dto, ItemRequest itemRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ownerId", ignore = true)
+    @Mapping(target = "itemRequest", ignore = true)
     void update(@MappingTarget Item item, UpdateItemDTO dto);
 }

@@ -18,6 +18,8 @@ import ru.practicum.shareit.server.item.mappers.ItemMapper;
 import ru.practicum.shareit.server.item.model.Comment;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.item.storage.ItemStorage;
+import ru.practicum.shareit.server.request.model.ItemRequest;
+import ru.practicum.shareit.server.request.service.ItemRequestService;
 import ru.practicum.shareit.server.user.model.User;
 import ru.practicum.shareit.server.item.storage.CommentStorage;
 import ru.practicum.shareit.server.user.storage.UserStorage;
@@ -41,6 +43,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserStorage userStorage;
     private final BookingStorage bookingStorage;
     private final CommentStorage commentStorage;
+    private final ItemRequestService itemRequestService;
 
     @Override
     public ResponseItemDTO create(CreateItemDTO itemToCreate, int ownerId) {
@@ -48,7 +51,13 @@ public class ItemServiceImpl implements ItemService {
 
         checkUserExists(ownerId);
 
-        Item item = itemMapper.toEntity(itemToCreate);
+        Integer itemRequestId = itemToCreate.getRequestId();
+        ItemRequest itemRequest = null;
+        if (itemRequestId != null) {
+            itemRequest = itemRequestService.checkExistsAndReturnIt(itemRequestId);
+        }
+
+        Item item = itemMapper.toEntity(itemToCreate, itemRequest);
         item.setOwnerId(ownerId);
 
         Item createdItem = itemStorage.save(item);

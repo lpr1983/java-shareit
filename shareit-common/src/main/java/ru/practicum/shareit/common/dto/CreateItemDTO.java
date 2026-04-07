@@ -2,9 +2,11 @@ package ru.practicum.shareit.common.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CreateItemDTO {
     @NotBlank(message = "Наименование не может быть пустым")
     private String name;
@@ -14,4 +16,6 @@ public class CreateItemDTO {
 
     @NotNull(message = "Поле available должно быть установлено")
     private Boolean available;
+
+    private Integer requestId;
 }
