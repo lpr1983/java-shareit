@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.common.dto.CreateBookingDTO;
 import ru.practicum.shareit.server.booking.dto.ResponseBookingDTO;
 import ru.practicum.shareit.common.model.BookingStateFilter;
-import ru.practicum.shareit.common.model.BookingStatus;
+import ru.practicum.shareit.server.booking.model.BookingStatus;
 import ru.practicum.shareit.server.booking.mappers.BookingMapper;
 import ru.practicum.shareit.server.booking.model.Booking;
 import ru.practicum.shareit.server.booking.storage.BookingStorage;
