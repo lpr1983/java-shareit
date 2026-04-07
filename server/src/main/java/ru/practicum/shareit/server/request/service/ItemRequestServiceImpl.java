@@ -86,9 +86,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         log.debug("Найдено чужих запросов вещей: userId={}, count={}", userId, itemRequests.size());
 
-        return itemRequests.stream()
-                .map(r -> mapper.toResponseDto(r, null))
-                .toList();
+        return getDTOListWithItems(itemRequests);
     }
 
     @Override
@@ -109,7 +107,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         }
 
         List<Integer> ids = itemRequests.stream().map(ItemRequest::getId).toList();
-        log.debug("Загрузка items для запросов вещей: requestIds={}", ids);
+        log.debug("Запрос items для запросов вещей: requestIds={}", ids);
 
         List<Item> itemsByIds = itemStorage.findAllByItemRequest_IdInOrderByIdAsc(ids);
 
@@ -125,8 +123,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             mapOfItems.computeIfAbsent(itemRequestId, k -> new ArrayList<>())
                     .add(i);
         }
-
-        log.debug("Сгруппировано items по запросам вещей: requestCountWithItems={}", mapOfItems.size());
 
         return itemRequests.stream()
                 .map(r -> mapper.toResponseDto(r,
