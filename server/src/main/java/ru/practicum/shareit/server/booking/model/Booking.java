@@ -11,8 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.user.model.User;
@@ -24,26 +26,28 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
-    Item item;
+    private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booker_id", nullable = false)
-    User booker;
+    private User booker;
 
     @Column(name = "start_datetime", nullable = false)
-    LocalDateTime start;
+    private LocalDateTime start;
 
     @Column(name = "end_datetime", nullable = false)
-    LocalDateTime end;
+    private LocalDateTime end;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    BookingStatus status;
+    private BookingStatus status;
 }
