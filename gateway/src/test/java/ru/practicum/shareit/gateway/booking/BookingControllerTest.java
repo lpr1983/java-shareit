@@ -47,10 +47,12 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void create_validData_thenCallsClient() {
+        LocalDateTime start = LocalDateTime.now().plusDays(1);
+        LocalDateTime end = LocalDateTime.now().plusDays(2);
         CreateBookingDTO dto = CreateBookingDTO.builder()
                 .itemId(10)
-                .start(LocalDateTime.of(2026, 4, 10, 12, 0))
-                .end(LocalDateTime.of(2026, 4, 11, 12, 0))
+                .start(start)
+                .end(end)
                 .build();
 
         mockMvc.perform(post("/bookings")
@@ -64,8 +66,8 @@ class BookingControllerTest {
 
         CreateBookingDTO actual = captor.getValue();
         assertEquals(10, actual.getItemId());
-        assertEquals(LocalDateTime.of(2026, 4, 10, 12, 0), actual.getStart());
-        assertEquals(LocalDateTime.of(2026, 4, 11, 12, 0), actual.getEnd());
+        assertEquals(start, actual.getStart());
+        assertEquals(end, actual.getEnd());
     }
 
     @Test
@@ -112,10 +114,13 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void create_invalidUserId_thenReturnBadRequest() {
+        LocalDateTime start = LocalDateTime.now().plusDays(1);
+        LocalDateTime end = LocalDateTime.now().plusDays(2);
+
         CreateBookingDTO dto = CreateBookingDTO.builder()
                 .itemId(10)
-                .start(LocalDateTime.of(2026, 4, 10, 12, 0))
-                .end(LocalDateTime.of(2026, 4, 11, 12, 0))
+                .start(start)
+                .end(end)
                 .build();
 
         mockMvc.perform(post("/bookings")
