@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
 @Transactional
 class ItemServiceImplIntegrationTest {
