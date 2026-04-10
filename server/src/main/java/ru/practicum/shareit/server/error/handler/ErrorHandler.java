@@ -30,7 +30,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidationException(ConflictException ex) {
+    public ErrorResponse handleConflictException(ConflictException ex) {
         log.warn("Conflict: {}", ex.getMessage());
         return new ErrorResponse(ex.getMessage());
     }
