@@ -1,11 +1,13 @@
-package ru.practicum.shareit.server.item.dto;
+package ru.practicum.shareit.common.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder
 public class ResponseItemDTO {
     private int id;
     private String name;

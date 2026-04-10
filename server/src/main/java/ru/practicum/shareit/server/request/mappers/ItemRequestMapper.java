@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.request.model.ItemRequest;
-import ru.practicum.shareit.server.request.dto.ItemRequestDTO;
+import ru.practicum.shareit.common.dto.ItemRequestDTO;
 
 import java.util.List;
 

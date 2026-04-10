@@ -2,8 +2,8 @@ package ru.practicum.shareit.server.item.service;
 
 import ru.practicum.shareit.common.dto.CreateCommentDTO;
 import ru.practicum.shareit.common.dto.CreateItemDTO;
-import ru.practicum.shareit.server.item.dto.ResponseCommentDTO;
-import ru.practicum.shareit.server.item.dto.ResponseItemDTO;
+import ru.practicum.shareit.common.dto.ResponseCommentDTO;
+import ru.practicum.shareit.common.dto.ResponseItemDTO;
 import ru.practicum.shareit.common.dto.UpdateItemDTO;
 
 import java.util.List;

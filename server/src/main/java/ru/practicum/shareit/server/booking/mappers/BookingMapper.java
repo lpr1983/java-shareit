@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.shareit.common.dto.CreateBookingDTO;
-import ru.practicum.shareit.server.booking.dto.ResponseBookingDTO;
+import ru.practicum.shareit.common.dto.ResponseBookingDTO;
 import ru.practicum.shareit.server.booking.model.Booking;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.user.model.User;

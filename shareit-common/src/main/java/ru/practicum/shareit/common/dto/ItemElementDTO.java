@@ -1,4 +1,4 @@
-package ru.practicum.shareit.server.request.dto;
+package ru.practicum.shareit.common.dto;
 
 import lombok.Getter;
 import lombok.Setter;

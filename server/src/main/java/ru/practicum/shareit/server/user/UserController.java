@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.dto.CreateUserDTO;
 import ru.practicum.shareit.common.dto.UpdateUserDTO;
-import ru.practicum.shareit.server.user.dto.ResponseUserDTO;
+import ru.practicum.shareit.common.dto.ResponseUserDTO;
 import ru.practicum.shareit.server.user.service.UserService;
 
 import java.util.List;

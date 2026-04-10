@@ -8,7 +8,7 @@ import ru.practicum.shareit.common.dto.CreateItemRequestDTO;
 import ru.practicum.shareit.server.error.exception.NotFoundException;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.item.storage.ItemStorage;
-import ru.practicum.shareit.server.request.dto.ItemRequestDTO;
+import ru.practicum.shareit.common.dto.ItemRequestDTO;
 import ru.practicum.shareit.server.request.mappers.ItemRequestMapper;
 import ru.practicum.shareit.server.request.model.ItemRequest;
 import ru.practicum.shareit.server.request.storage.ItemRequestStorage;

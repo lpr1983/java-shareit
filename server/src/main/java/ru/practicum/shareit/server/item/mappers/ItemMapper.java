@@ -7,7 +7,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.shareit.common.dto.CreateItemDTO;
-import ru.practicum.shareit.server.item.dto.ResponseItemDTO;
+import ru.practicum.shareit.common.dto.ResponseItemDTO;
 import ru.practicum.shareit.common.dto.UpdateItemDTO;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.request.model.ItemRequest;

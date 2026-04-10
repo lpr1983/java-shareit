@@ -2,7 +2,7 @@ package ru.practicum.shareit.server.request.service;
 
 import ru.practicum.shareit.common.dto.CreateItemRequestDTO;
 import ru.practicum.shareit.server.request.model.ItemRequest;
-import ru.practicum.shareit.server.request.dto.ItemRequestDTO;
+import ru.practicum.shareit.common.dto.ItemRequestDTO;
 
 import java.util.List;
 

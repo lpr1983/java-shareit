@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.shareit.common.dto.CreateCommentDTO;
-import ru.practicum.shareit.server.item.dto.ResponseCommentDTO;
+import ru.practicum.shareit.common.dto.ResponseCommentDTO;
 import ru.practicum.shareit.server.item.model.Comment;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.user.model.User;

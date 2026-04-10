@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.dto.CreateItemRequestDTO;
-import ru.practicum.shareit.server.request.dto.ItemRequestDTO;
+import ru.practicum.shareit.common.dto.ItemRequestDTO;
 import ru.practicum.shareit.server.request.service.ItemRequestService;
 
 import java.util.List;

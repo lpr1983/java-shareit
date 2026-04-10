@@ -8,7 +8,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import ru.practicum.shareit.common.dto.CreateUserDTO;
 import ru.practicum.shareit.common.dto.UpdateUserDTO;
-import ru.practicum.shareit.server.user.dto.ResponseUserDTO;
+import ru.practicum.shareit.common.dto.ResponseUserDTO;
 import ru.practicum.shareit.server.user.model.User;
 
 @Mapper(componentModel = "spring",

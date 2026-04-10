@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.dto.CreateCommentDTO;
 import ru.practicum.shareit.common.dto.CreateItemDTO;
-import ru.practicum.shareit.server.item.dto.ResponseCommentDTO;
-import ru.practicum.shareit.server.item.dto.ResponseItemDTO;
+import ru.practicum.shareit.common.dto.ResponseCommentDTO;
+import ru.practicum.shareit.common.dto.ResponseItemDTO;
 import ru.practicum.shareit.common.dto.UpdateItemDTO;
 import ru.practicum.shareit.server.item.service.ItemService;
 

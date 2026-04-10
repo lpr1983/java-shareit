@@ -6,7 +6,7 @@ import ru.practicum.shareit.server.error.exception.ConflictException;
 import ru.practicum.shareit.server.error.exception.NotFoundException;
 import ru.practicum.shareit.common.dto.CreateUserDTO;
 import ru.practicum.shareit.common.dto.UpdateUserDTO;
-import ru.practicum.shareit.server.user.dto.ResponseUserDTO;
+import ru.practicum.shareit.common.dto.ResponseUserDTO;
 import ru.practicum.shareit.server.user.mappers.UserMapper;
 import ru.practicum.shareit.server.user.model.User;
 import ru.practicum.shareit.server.user.storage.UserStorage;
