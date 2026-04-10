@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.server.request.model.ItemRequest;
@@ -16,6 +17,7 @@ import ru.practicum.shareit.server.request.model.ItemRequest;
 @Table(name = "items")
 @Getter
 @Setter
+@Builder
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
