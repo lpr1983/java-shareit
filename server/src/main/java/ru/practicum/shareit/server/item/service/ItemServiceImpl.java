@@ -3,7 +3,7 @@ package ru.practicum.shareit.server.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.common.model.BookingStatus;
+import ru.practicum.shareit.server.booking.model.BookingStatus;
 import ru.practicum.shareit.server.booking.model.BookingDatesOfItem;
 import ru.practicum.shareit.server.booking.storage.BookingStorage;
 import ru.practicum.shareit.server.error.exception.NotFoundException;

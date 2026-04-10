@@ -3,7 +3,6 @@ package ru.practicum.shareit.common.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.common.model.BookingStatus;
 
 import java.time.LocalDateTime;
 
@@ -16,5 +15,5 @@ public class ResponseBookingDTO {
     private ResponseUserDTO booker;
     private LocalDateTime start;
     private LocalDateTime end;
-    private BookingStatus status;
+    private String status;
 }
