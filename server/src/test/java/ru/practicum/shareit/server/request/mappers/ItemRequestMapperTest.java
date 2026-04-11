@@ -3,9 +3,11 @@ package ru.practicum.shareit.server.request.mappers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import ru.practicum.shareit.common.dto.CreateItemRequestDTO;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.common.dto.ItemRequestDTO;
 import ru.practicum.shareit.server.request.model.ItemRequest;
+import ru.practicum.shareit.server.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +15,20 @@ import java.util.List;
 class ItemRequestMapperTest {
 
     ItemRequestMapper mapper = Mappers.getMapper(ItemRequestMapper.class);
+
+    @Test
+    void toEntity() {
+        CreateItemRequestDTO dto = CreateItemRequestDTO.builder().description("test").build();
+        LocalDateTime now = LocalDateTime.now();
+        int userId = 1;
+        User user = User.builder().id(userId).build();
+
+        ItemRequest itemRequest = mapper.toEntity(dto, user, now);
+        Assertions.assertNotNull(itemRequest.getUser());
+        Assertions.assertEquals(itemRequest.getUser().getId(), userId);
+        Assertions.assertEquals(itemRequest.getDescription(), "test");
+        Assertions.assertEquals(itemRequest.getCreated(), now);
+    }
 
     @Test
     void toResponseDto_allFields_thenMapCorrectly() {

@@ -9,6 +9,8 @@ import ru.practicum.shareit.common.dto.CreateCommentDTO;
 import ru.practicum.shareit.common.dto.CreateItemDTO;
 import ru.practicum.shareit.common.dto.UpdateItemDTO;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("/items")
 @Validated
@@ -45,6 +47,10 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> search(@RequestParam String text) {
+        if (text == null || text.isBlank()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
         return itemClient.search(text);
     }
 

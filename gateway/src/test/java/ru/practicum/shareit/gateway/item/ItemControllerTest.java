@@ -286,12 +286,15 @@ class ItemControllerTest {
 
     @Test
     @SneakyThrows
-    void search_emptyText_thenCallsClient() {
+    void search_emptyText_thenReturnEmptyCollectionAndDoesntCallClient() {
         mockMvc.perform(get("/items/search")
                         .param("text", ""))
-                .andReturn();
+                .andExpect((status().isOk()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
 
-        verify(itemClient).search("");
+        verifyNoInteractions(itemClient);
     }
 
     @Test

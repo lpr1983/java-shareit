@@ -37,7 +37,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         User user = userService.checkUserExistsAndReturnIt(userId);
 
-        ItemRequest itemRequest = new ItemRequest();
+        ItemRequest itemRequest = mapper.toEntity(dto, user, LocalDateTime.now());
+
         itemRequest.setDescription(dto.getDescription());
         itemRequest.setCreated(LocalDateTime.now());
         itemRequest.setUser(user);
